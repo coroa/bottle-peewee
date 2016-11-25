@@ -158,9 +158,10 @@ class PeeweePlugin(object):
                 if db.autocommit: db.database.commit()
             # except HTTPError, e:
             #     raise
-            # except HTTPResponse, e:
-            #     if db.autocommit: db.database.commit()
-            #     raise
+            # bottle raise that when redirecing from a page for example
+            except HTTPResponse as e:
+                 if db.autocommit: db.database.commit()
+                 raise
             except Exception as e:
                 db.database.rollback()
                 raise HTTPError(500, "Database Error: %s" % str(e), e)
