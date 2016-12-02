@@ -112,7 +112,7 @@ class PeeweePlugin(object):
     api = 2
 
     def __init__(self, db, keyword='db'):
-       self.db = db 
+       self.db = db
        self.keyword = keyword
 
     def setup(self, app):
@@ -126,7 +126,7 @@ class PeeweePlugin(object):
 
     def apply(self, callback, context):
         # Override global configuration with route-specific values.
-        
+
         # print 'VERSION:', bottle.__version__
         # if bottle.__version__.startswith('0.9'):
         #     conf = context['config']
@@ -156,15 +156,9 @@ class PeeweePlugin(object):
             try:
                 rv = callback(*args, **kwargs)
                 if db.autocommit: db.database.commit()
-            # except HTTPError, e:
-            #     raise
-            # bottle raise that when redirecing from a page for example
-            except HTTPResponse as e:
-                 if db.autocommit: db.database.commit()
-                 raise
-            except Exception as e:
+            except PeeweeException as e:
                 db.database.rollback()
-                raise HTTPError(500, "Database Error: %s" % str(e), e)
+                raise
             finally:
                 db.database.close()
             return rv
