@@ -49,7 +49,7 @@ Usage Example::
 '''
 
 __author__ = "Indra Gunawan"
-__version__ = '0.1.2'
+__version__ = '0.1.3'
 __license__ = 'MIT'
 
 ### CUT HERE (see setup.py)
@@ -156,7 +156,7 @@ class PeeweePlugin(object):
             try:
                 rv = callback(*args, **kwargs)
                 if db.autocommit: db.database.commit()
-            except PeeweeException as e:
+            except peewee.PeeweeException as e:
                 db.database.rollback()
                 raise
             finally:
