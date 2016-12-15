@@ -11,45 +11,45 @@ routes that don't need a database connection.
 
 Usage Example::
 
-	import bottle
-	import peewee
-	from peewee import *
-	from bottle_peewee import Database, Plugin
+    import bottle
+    import peewee
+    from peewee import *
+    from bottle_peewee import Database, Plugin
 
-	app = bottle.Bottle()
+    app = bottle.Bottle()
 
-	db = Database('db/sample.db', 'peewee.SqliteDatabase', autocommit=False)
+    db = Database('db/sample.db', 'peewee.SqliteDatabase', autocommit=False)
 
-	class BaseModel(Model):
-	    class Meta:
-		database = db.database
+    class BaseModel(Model):
+        class Meta:
+            database = db.database
 
-	class User(BaseModel):
-		name = CharField()
+    class User(BaseModel):
+        name = CharField()
 
-	User.create_table(fail_silently=True)
+    User.create_table(fail_silently=True)
 
-	User.create(name='A')
-	User.create(name='B')
-	User.create(name='C')
+    User.create(name='A')
+    User.create(name='B')
+    User.create(name='C')
 
-	plugin = Plugin(db)
-	app.install(plugin)
+    plugin = Plugin(db)
+    app.install(plugin)
 
-	@app.route('/')
-	def index(db):
-		users = User.select()
-		result = "".join(["<li>%s</li>" % user.name for user in users])
-		return "Here is:<br><ul>%s</ul>" % result
+    @app.route('/')
+    def index(db):
+        users = User.select()
+        result = "".join(["<li>%s</li>" % user.name for user in users])
+        return "Here is:<br><ul>%s</ul>" % result
 
 
-	if __name__ == '__main__':
-	    bottle.debug(True)
-	    bottle.run(app, reloader=True)
+    if __name__ == '__main__':
+        bottle.debug(True)
+         bottle.run(app, reloader=True)
 '''
 
 __author__ = "Indra Gunawan"
-__version__ = '0.1.1'
+__version__ = '0.1.3'
 __license__ = 'MIT'
 
 ### CUT HERE (see setup.py)
@@ -112,7 +112,7 @@ class PeeweePlugin(object):
     api = 2
 
     def __init__(self, db, keyword='db'):
-       self.db = db 
+       self.db = db
        self.keyword = keyword
 
     def setup(self, app):
@@ -126,7 +126,7 @@ class PeeweePlugin(object):
 
     def apply(self, callback, context):
         # Override global configuration with route-specific values.
-        
+
         # print 'VERSION:', bottle.__version__
         # if bottle.__version__.startswith('0.9'):
         #     conf = context['config']
@@ -156,15 +156,9 @@ class PeeweePlugin(object):
             try:
                 rv = callback(*args, **kwargs)
                 if db.autocommit: db.database.commit()
-            # except HTTPError, e:
-            #     raise
-            # bottle raise that when redirecing from a page for example
-            except HTTPResponse as e:
-                 if db.autocommit: db.database.commit()
-                 raise
-            except Exception as e:
+            except peewee.PeeweeException as e:
                 db.database.rollback()
-                raise HTTPError(500, "Database Error: %s" % str(e), e)
+                raise
             finally:
                 db.database.close()
             return rv
