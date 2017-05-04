@@ -148,8 +148,13 @@ class PeeweePlugin(object):
             return callback
 
         def wrapper(*args, **kwargs):
-            # Connect to the database
-            db.database.connect()
+    	    # Connect to the database
+            try:
+            	db.database.connect()
+            except peewee.OperationalError:
+                # the db is already open
+                pass
+
             # Add the connection handle as a keyword argument.
             kwargs[keyword] = db
 
