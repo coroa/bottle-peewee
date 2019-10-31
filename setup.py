@@ -8,16 +8,16 @@ try:
 except ImportError:
     from distutils.command.build_py import build_py
 
-filename = os.path.join(os.path.dirname(__file__), 'bottle_peewee.py')
-source = open(filename).read().split('### CUT HERE')[0]
-exec(source)
+with open('README', encoding='utf-8') as f:
+    long_description = f.read()
 
 setup(
     name='bottle-peewee',
     version='0.1',
     url='https://github.com/oz123/bottle-peewee',
     description='Peewee integration for Bottle.',
-    long_description=__doc__,
+    long_description=long_description,
+    long_description_content_type='text/x-rst',
     author='Oz Tiram',
     author_email='oz.tiram',
     license='MIT',
