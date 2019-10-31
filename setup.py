@@ -1,12 +1,7 @@
 #!/usr/bin/env python
 
 import os
-from distutils.core import setup
-
-try:
-    from distutils.command.build_py import build_py_2to3 as build_py
-except ImportError:
-    from distutils.command.build_py import build_py
+from setuptools import setup
 
 with open('README', encoding='utf-8') as f:
     long_description = f.read()
@@ -25,7 +20,7 @@ setup(
     py_modules=[
         'bottle_peewee'
     ],
-    requires=[
+    install_requires=[
         'bottle>=0.12',
         'peewee>=3.0'
     ],
@@ -37,6 +32,5 @@ setup(
         'Programming Language :: Python',
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
         'Topic :: Software Development :: Libraries :: Python Modules'
-    ],
-    cmdclass={'build_py': build_py}
+    ]
 )
